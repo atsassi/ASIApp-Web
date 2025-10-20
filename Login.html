@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASIApp – Collegamento Alpaca</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="screen">
+  <header class="topbar"><span>ASI INVESTMENT</span></header>
+
+  <div class="card">
+    <h2>Collega il tuo conto Alpaca</h2>
+    <p class="muted">
+      Inserisci le tue credenziali (reali). Restano sul tuo dispositivo (LocalStorage).
+    </p>
+    <form id="alpacaForm" class="form">
+      <label>API Key
+        <input id="alpacaKey" autocomplete="off" required>
+      </label>
+      <label>API Secret
+        <input id="alpacaSecret" type="password" autocomplete="off" required>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="remember"> Ricordami su questo dispositivo
+      </label>
+      <button class="btn btn--gold" type="submit">Connetti</button>
+      <p class="help">
+        Non hai le chiavi? Apri <a href="https://app.alpaca.markets/brokerage" target="_blank" rel="noopener">Alpaca</a>
+      </p>
+    </form>
+  </div>
+
+  <footer class="footer">
+    <button class="btn btn--ghost" onclick="logoutAsi()">Esci ASI</button>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    guardAsi(); // richiede login ASI valido
+    initAlpacaLogin({
+      endpoint: 'https://api.alpaca.markets', // LIVE (paper: https://paper-api.alpaca.markets)
+      onSuccess: () => location.href = 'dashboard.html'
+    });
+  </script>
+</body>
+</html>

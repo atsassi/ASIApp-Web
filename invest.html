@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASIApp – Invest</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="screen">
+  <header class="topbar"><span>ASI INVESTMENT</span></header>
+
+  <div class="card">
+    <h2>Strategia di investimento</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>Buffett-style (70%)</h3>
+        <ul class="muted small">
+          <li>ETF S&P / Large cap qualità</li>
+          <li>Trigger dinamico: take-profit ~2.0–3.3%</li>
+          <li>Riallocazione mensile</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Speculativa (30%)</h3>
+        <ul class="muted small">
+          <li>Titoli selezionati lista ASI</li>
+          <li>Scalping orario, TP consigliato ~1.9–2.5%</li>
+          <li>Stop dinamico e costo transazione incluso</li>
+        </ul>
+      </div>
+    </div>
+
+    <label class="block">Capitale da impiegare (USD)
+      <input id="capital" type="number" value="10000" min="100" step="100">
+    </label>
+
+    <label class="block">Modalità
+      <select id="mode">
+        <option value="backtest">Backtest su prezzi correnti (demo)</option>
+        <option value="live">LIVE (esegue ordini veri)</option>
+      </select>
+    </label>
+
+    <button class="btn btn--gold" id="activateBtn">Attiva</button>
+    <p id="investMsg" class="muted"></p>
+  </div>
+
+  <footer class="footer">
+    <button class="btn btn--ghost" onclick="location.href='dashboard.html'">Torna</button>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    guardAsi(); guardAlpaca();
+    initInvest();
+  </script>
+</body>
+</html>

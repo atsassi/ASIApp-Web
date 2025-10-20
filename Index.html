@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASIApp – Accesso</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="screen screen--splash">
+  <div class="card card--center">
+    <div class="logo">
+      <!-- usa il tuo PNG: images/logo-toro.png (o lupo) -->
+      <img src="images/logo-toro.png" alt="ASI Investment" />
+      <h1>ASI INVESTMENT</h1>
+    </div>
+
+    <h2>Accedi</h2>
+    <form id="asiLogin" class="form">
+      <label>Password ASI
+        <input type="password" id="asiPass" placeholder="••••••••" required>
+      </label>
+      <button type="submit" class="btn btn--gold">Entra</button>
+      <p class="help">
+        Dimenticata? <a id="forgotLink" href="#">Recupero password</a>
+      </p>
+      <p id="lockMsg" class="error" style="display:none;"></p>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    initAsiLogin({
+      password: 'asi2025',
+      lockMinutes: 15,
+      maxAttempts: 3,
+      onSuccess: () => location.href = 'login.html',
+      onForgot: () => {
+        // Invia email di richiesta reset (mailto apre il client).
+        window.location.href =
+          'mailto:atsassi@gmail.com?subject=Reset%20password%20ASIApp&body=Richiesta%20reset%20password%20per%20ASIApp.';
+      }
+    });
+  </script>
+</body>
+</html>
