@@ -4,24 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ASIApp – Accesso</title>
+
+  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Icona principale -->
+  <link rel="icon" href="favicon.png" type="image/png">
+
+  <!-- Stile principale -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Colore barra indirizzi (per mobile) -->
+  <meta name="theme-color" content="#c9a227">
 </head>
+
 <body class="screen screen--splash">
   <div class="card card--center">
     <div class="logo">
-      <!-- usa il tuo PNG: images/logo-toro.png (o lupo) -->
-      <img src="images/logo-toro.png" alt="ASI Investment" />
+      <!-- usa il tuo PNG o JPG: logo-toro.jpg (o logo-lupo.jpg) -->
+      <img src="logo-toro.jpg" alt="ASI Investment" width="120" />
       <h1>ASI INVESTMENT</h1>
     </div>
 
-    <h2>Accedi</h2>
+    <h2>Accesso</h2>
     <form id="asiLogin" class="form">
-      <label>Password ASI
-        <input type="password" id="asiPass" placeholder="••••••••" required>
-      </label>
+      <label>Password ASI</label>
+      <input type="password" id="asiPass" placeholder="••••••••" required />
       <button type="submit" class="btn btn--gold">Entra</button>
+
       <p class="help">
         Dimenticata? <a id="forgotLink" href="#">Recupero password</a>
       </p>
@@ -29,7 +39,10 @@
     </form>
   </div>
 
+  <!-- Script principale -->
   <script src="script.js"></script>
+
+  <!-- Logica di accesso -->
   <script>
     initAsiLogin({
       password: 'asi2025',
@@ -37,11 +50,21 @@
       maxAttempts: 3,
       onSuccess: () => location.href = 'login.html',
       onForgot: () => {
-        // Invia email di richiesta reset (mailto apre il client).
         window.location.href =
           'mailto:atsassi@gmail.com?subject=Reset%20password%20ASIApp&body=Richiesta%20reset%20password%20per%20ASIApp.';
       }
     });
+  </script>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('Service Worker registrato correttamente.'))
+          .catch(err => console.error('Errore nel Service Worker:', err));
+      });
+    }
   </script>
 </body>
 </html>
