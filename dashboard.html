@@ -1,37 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASIApp – Dashboard</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="screen">
-  <header class="topbar"><span>ASI INVESTMENT</span></header>
+<body>
+  <header>
+    <h1>ASI INVESTMENT</h1>
+    <p id="balance">$0.00</p>
+  </header>
 
-  <div class="hero hero--wall">
-    <div class="hero__content">
-      <div id="accountValue" class="balance">—</div>
-      <button class="btn btn--black" onclick="location.href='invest.html'">INVEST</button>
+  <main>
+    <section>
+      <h2>Ultimi ordini</h2>
+      <ul id="ordersList">
+        <li>Nessun ordine recente.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Simulazione Ordine</h3>
+      <button id="buyBtn" class="btn btn--gold">Compra 1 AAPL</button>
+    </section>
+
+    <div class="actions">
+      <button id="disconnect">Scollega Alpaca</button>
+      <button id="logout">Esci ASI</button>
     </div>
-  </div>
+  </main>
 
-  <section class="card">
-    <h3>Ultimi ordini</h3>
-    <div id="orders" class="table"></div>
-  </section>
-
-  <footer class="footer">
-    <button class="btn btn--ghost" onclick="clearAlpaca()">Scollega Alpaca</button>
-    <button class="btn btn--ghost" onclick="logoutAsi()">Esci ASI</button>
-  </footer>
-
-  <script src="script.js"></script>
-  <script>
-    guardAsi(); guardAlpaca();
-    loadDashboard();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
