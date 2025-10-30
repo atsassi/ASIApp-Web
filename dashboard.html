@@ -5,30 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASIApp – Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header>
+
+  <nav class="navbar">
     <h1>ASI INVESTMENT</h1>
-    <p id="balance">$0.00</p>
-  </header>
+    <ul>
+      <li><a href="#" id="nav-dashboard" class="active">🏠 Dashboard</a></li>
+      <li><a href="#" id="nav-performance">📈 Andamento</a></li>
+      <li><a href="#" id="nav-portfolio">💼 Portafoglio</a></li>
+      <li><a href="#" id="nav-settings">⚙️ Impostazioni</a></li>
+      <li><button id="logout">🚪 Esci</button></li>
+    </ul>
+  </nav>
 
-  <main>
-    <section>
-      <h2>Ultimi ordini</h2>
-      <ul id="ordersList">
-        <li>Nessun ordine recente.</li>
-      </ul>
+  <main id="content">
+    <section id="dashboard-section" class="visible">
+      <h2>Panoramica</h2>
+      <div class="stats">
+        <div><strong>Saldo:</strong> <span id="balance">$0.00</span></div>
+        <div><strong>Profitto giornaliero:</strong> <span id="dailyChange">--</span></div>
+        <div><strong>ROI Totale:</strong> <span id="roiTotal">--</span></div>
+        <div><strong>Ordini totali:</strong> <span id="orderCount">--</span></div>
+      </div>
     </section>
 
-    <section>
-      <h3>Simulazione Ordine</h3>
-      <button id="buyBtn" class="btn btn--gold">Compra 1 AAPL</button>
+    <section id="performance-section" class="hidden">
+      <h2>Andamento Portafoglio</h2>
+      <canvas id="portfolioChart" height="200"></canvas>
     </section>
 
-    <div class="actions">
-      <button id="disconnect">Scollega Alpaca</button>
-      <button id="logout">Esci ASI</button>
-    </div>
+    <section id="portfolio-section" class="hidden">
+      <h2>Dettaglio Portafoglio</h2>
+      <table id="positionsTable">
+        <thead>
+          <tr><th>Simbolo</th><th>Qty</th><th>Prezzo Medio</th><th>Valore Attuale</th><th>Var%</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="settings-section" class="hidden">
+      <h2>Impostazioni</h2>
+      <p>Account collegato a <strong>Alpaca Paper Trading</strong></p>
+      <button id="disconnect">🔌 Scollega Alpaca</button>
+    </section>
   </main>
 
   <script src="app.js"></script>
