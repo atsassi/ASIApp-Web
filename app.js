@@ -1,100 +1,109 @@
-// Configurazione API Alpaca (endpoint Paper Trading)
-const BASE_URL = 'https://paper-api.alpaca.markets/v2';
+// === ASI APP v2 ===
+// Dashboard interattiva collegata ad Alpaca API
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const apiKey = localStorage.getItem("alpacaKey");
-  const apiSecret = localStorage.getItem("alpacaSecret");
+const BASE_URL = "https://paper-api.alpaca.markets/v2"; // per ora demo
+let API_KEY = localStorage.getItem("alpacaKey");
+let API_SECRET = localStorage.getItem("alpacaSecret");
 
-  if (!apiKey || !apiSecret) {
-    alert("Chiavi API non trovate. Torna alla schermata di collegamento.");
-    window.location.href = "login.html";
-    return;
-  }
+// Funzione base per chiamate API
+async function alpacaFetch(endpoint, method = "GET", body = null) {
+  const headers = {
+    "APCA-API-KEY-ID": API_KEY,
+    "APCA-API-SECRET-KEY": API_SECRET,
+    "Content-Type": "application/json"
+  };
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+  const res = await fetch(`${BASE_URL}${endpoint}`, options);
+  return await res.json();
+}
 
-  // Mostra saldo
-  const balanceEl = document.getElementById("balance");
-  const ordersList = document.getElementById("ordersList");
-  const buyBtn = document.getElementById("buyBtn");
+// === Sezione Dashboard ===
+async function loadDashboard() {
+  const account = await alpacaFetch("/account");
+  document.getElementById("balance").textContent =
+    "$" + parseFloat(account.cash || 0).toFixed(2);
+  document.getElementById("dailyChange").textContent =
+    (account.portfolio_value ? "$" + account.portfolio_value : "--");
+  document.getElementById("roiTotal").textContent =
+    (account.equity && account.last_equity)
+      ? ((account.equity - account.last_equity) / account.last_equity * 100).toFixed(2) + "%"
+      : "--";
 
-  async function getAccount() {
-    try {
-      const res = await fetch(`${BASE_URL}/account`, {
-        headers: {
-          "APCA-API-KEY-ID": apiKey,
-          "APCA-API-SECRET-KEY": apiSecret
-        }
-      });
-      const data = await res.json();
-      balanceEl.textContent = `$${parseFloat(data.cash).toFixed(2)}`;
-    } catch (err) {
-      balanceEl.textContent = "Errore connessione API.";
-      console.error(err);
-    }
-  }
+  const orders = await alpacaFetch("/orders?status=all&limit=50");
+  document.getElementById("orderCount").textContent = orders.length;
+}
 
-  async function getOrders() {
-    try {
-      const res = await fetch(`${BASE_URL}/orders?status=all&limit=5`, {
-        headers: {
-          "APCA-API-KEY-ID": apiKey,
-          "APCA-API-SECRET-KEY": apiSecret
-        }
-      });
-      const data = await res.json();
-      ordersList.innerHTML = "";
-      if (data.length === 0) {
-        ordersList.innerHTML = "<li>Nessun ordine recente.</li>";
-      } else {
-        data.forEach(o => {
-          const li = document.createElement("li");
-          li.textContent = `${o.side.toUpperCase()} ${o.qty} ${o.symbol} @ ${o.filled_avg_price || 'pendente'}`;
-          ordersList.appendChild(li);
-        });
+// === Sezione Portafoglio ===
+async function loadPortfolio() {
+  const positions = await alpacaFetch("/positions");
+  const tbody = document.querySelector("#positionsTable tbody");
+  tbody.innerHTML = "";
+  positions.forEach(p => {
+    const row = `<tr>
+      <td>${p.symbol}</td>
+      <td>${p.qty}</td>
+      <td>$${parseFloat(p.avg_entry_price).toFixed(2)}</td>
+      <td>$${parseFloat(p.market_value).toFixed(2)}</td>
+      <td>${parseFloat(p.unrealized_plpc * 100).toFixed(2)}%</td>
+    </tr>`;
+    tbody.insertAdjacentHTML("beforeend", row);
+  });
+}
+
+// === Sezione Andamento ===
+async function loadChart() {
+  const history = await alpacaFetch("/account/portfolio/history");
+  const ctx = document.getElementById("portfolioChart").getContext("2d");
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: history.timestamp.map(t => new Date(t * 1000).toLocaleDateString()),
+      datasets: [{
+        label: "Valore Portafoglio ($)",
+        data: history.equity,
+        borderColor: "#c9a227",
+        fill: false,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
       }
-    } catch (err) {
-      ordersList.innerHTML = "<li>Errore nel recupero ordini.</li>";
-      console.error(err);
     }
-  }
-
-  async function placeOrder(symbol = "AAPL", qty = 1, side = "buy") {
-    try {
-      const res = await fetch(`${BASE_URL}/orders`, {
-        method: "POST",
-        headers: {
-          "APCA-API-KEY-ID": apiKey,
-          "APCA-API-SECRET-KEY": apiSecret,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          symbol,
-          qty,
-          side,
-          type: "market",
-          time_in_force: "day"
-        })
-      });
-      const order = await res.json();
-      alert(`Ordine inviato: ${order.symbol} (${order.side})`);
-      getOrders();
-    } catch (err) {
-      alert("Errore nell'invio dell’ordine");
-      console.error(err);
-    }
-  }
-
-  // Eventi
-  buyBtn?.addEventListener("click", () => placeOrder());
-  document.getElementById("disconnect")?.addEventListener("click", () => {
-    localStorage.removeItem("alpacaKey");
-    localStorage.removeItem("alpacaSecret");
-    window.location.href = "login.html";
   });
-  document.getElementById("logout")?.addEventListener("click", () => {
-    localStorage.clear();
-    window.location.href = "index.html";
-  });
+}
 
-  await getAccount();
-  await getOrders();
+// === Gestione menu ===
+const sections = {
+  dashboard: document.getElementById("dashboard-section"),
+  performance: document.getElementById("performance-section"),
+  portfolio: document.getElementById("portfolio-section"),
+  settings: document.getElementById("settings-section")
+};
+
+function showSection(id) {
+  Object.values(sections).forEach(sec => sec.classList.add("hidden"));
+  sections[id].classList.remove("hidden");
+  document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+  document.getElementById("nav-" + id).classList.add("active");
+
+  if (id === "dashboard") loadDashboard();
+  if (id === "portfolio") loadPortfolio();
+  if (id === "performance") loadChart();
+}
+
+document.getElementById("nav-dashboard").addEventListener("click", () => showSection("dashboard"));
+document.getElementById("nav-performance").addEventListener("click", () => showSection("performance"));
+document.getElementById("nav-portfolio").addEventListener("click", () => showSection("portfolio"));
+document.getElementById("nav-settings").addEventListener("click", () => showSection("settings"));
+
+document.getElementById("logout").addEventListener("click", () => {
+  localStorage.removeItem("alpacaKey");
+  localStorage.removeItem("alpacaSecret");
+  window.location.href = "index.html";
 });
+
+window.onload = loadDashboard;
