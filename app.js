@@ -153,4 +153,5 @@ document.getElementById('startBot')?.addEventListener('click',()=>{
 });
 document.getElementById('stopBot')?.addEventListener('click',()=>{
  if(loopId){clearInterval(loopId);loopId=null;logm('BOT OFF');}});
+
 window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('asi_auth')==='ok')showAppUI();});
