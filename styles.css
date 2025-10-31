@@ -142,3 +142,9 @@ th {
     padding: 10px;
   }
 }
+
+canvas {
+  background-color: #181818;
+  border-radius: 8px;
+  padding: 10px;
+}
