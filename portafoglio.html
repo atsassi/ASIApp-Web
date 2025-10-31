@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portafoglio - ASI Investment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="navbar">
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="andamento.html">📈 Andamento</a>
+      <a href="portafoglio.html" class="active">💼 Portafoglio</a>
+      <a href="engine.html">🏁 Motore</a>
+      <a href="index.html">🚪 Esci</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Dettaglio Portafoglio</h2>
+    <p>Posizioni attive con valori aggiornati (demo o Alpaca live).</p>
+
+    <table>
+      <thead>
+        <tr><th>Simbolo</th><th>Quantità</th><th>Prezzo medio</th><th>Attuale</th><th>Var%</th></tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const data = [
+        {symbol: "AAPL", qty: 12, avg: 190.2, now: 192.1},
+        {symbol: "MSFT", qty: 8, avg: 330.0, now: 334.5},
+        {symbol: "NVDA", qty: 6, avg: 440.0, now: 452.0},
+        {symbol: "VOO", qty: 10, avg: 474.5, now: 478.9}
+      ];
+
+      const body = document.getElementById("tableBody");
+      data.forEach(d => {
+        const change = ((d.now - d.avg) / d.avg * 100).toFixed(2);
+        const color = change >= 0 ? "#00ff88" : "#ff4444";
+        body.innerHTML += `<tr>
+          <td>${d.symbol}</td>
+          <td>${d.qty}</td>
+          <td>$${d.avg}</td>
+          <td>$${d.now}</td>
+          <td style="color:${color}">${change}%</td>
+        </tr>`;
+      });
+    });
+  </script>
+</body>
+</html>
