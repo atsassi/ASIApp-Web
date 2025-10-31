@@ -1,58 +1,45 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASIApp – Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - ASI Investment</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
+  <header class="navbar">
+    <nav>
+      <a href="dashboard.html" class="active">🏠 Dashboard</a>
+      <a href="andamento.html">📈 Andamento</a>
+      <a href="portafoglio.html">💼 Portafoglio</a>
+      <a href="engine.html">🏁 Motore</a>
+      <a href="index.html">🚪 Esci</a>
+    </nav>
+  </header>
 
-  <nav class="navbar">
-    <h1>ASI INVESTMENT</h1>
-    <ul>
-      <li><a href="#" id="nav-dashboard" class="active">🏠 Dashboard</a></li>
-      <li><a href="#" id="nav-performance">📈 Andamento</a></li>
-      <li><a href="#" id="nav-portfolio">💼 Portafoglio</a></li>
-      <li><a href="#" id="nav-settings">⚙️ Impostazioni</a></li>
-      <li><button id="logout">🚪 Esci</button></li>
-    </ul>
-  </nav>
+  <main class="container">
+    <h2>Panoramica</h2>
+    <p><strong>Saldo:</strong> <span id="saldo">$0.00</span></p>
+    <p><strong>Profitto giornaliero:</strong> <span id="profitto">--</span></p>
+    <p><strong>ROI Totale:</strong> <span id="roi">--</span></p>
+    <p><strong>Ordini totali:</strong> <span id="ordini">--</span></p>
+    <p><strong>Motore AI:</strong> <span id="motore">--</span></p>
 
-  <main id="content">
-    <section id="dashboard-section" class="visible">
-      <h2>Panoramica</h2>
-      <div class="stats">
-        <div><strong>Saldo:</strong> <span id="balance">$0.00</span></div>
-        <div><strong>Profitto giornaliero:</strong> <span id="dailyChange">--</span></div>
-        <div><strong>ROI Totale:</strong> <span id="roiTotal">--</span></div>
-        <div><strong>Ordini totali:</strong> <span id="orderCount">--</span></div>
-      </div>
-    </section>
+    <canvas id="chartROI" style="margin-top:30px;max-height:320px;"></canvas>
 
-    <section id="performance-section" class="hidden">
-      <h2>Andamento Portafoglio</h2>
-      <canvas id="portfolioChart" height="200"></canvas>
-    </section>
-
-    <section id="portfolio-section" class="hidden">
-      <h2>Dettaglio Portafoglio</h2>
-      <table id="positionsTable">
+    <section class="card">
+      <h3>Andamento Portafoglio</h3>
+      <table>
         <thead>
-          <tr><th>Simbolo</th><th>Qty</th><th>Prezzo Medio</th><th>Valore Attuale</th><th>Var%</th></tr>
+          <tr><th>Simbolo</th><th>Quantità</th><th>Valore medio</th><th>Attuale</th><th>Var%</th></tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="portfolio"></tbody>
       </table>
-    </section>
-
-    <section id="settings-section" class="hidden">
-      <h2>Impostazioni</h2>
-      <p>Account collegato a <strong>Alpaca Paper Trading</strong></p>
-      <button id="disconnect">🔌 Scollega Alpaca</button>
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
