@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Impostazioni - ASI Investment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="navbar">
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="andamento.html">📈 Andamento</a>
+      <a href="portafoglio.html">💼 Portafoglio</a>
+      <a href="engine.html">🏁 Motore</a>
+      <a href="impostazioni.html" class="active">⚙️ Impostazioni</a>
+      <a href="index.html">🚪 Esci</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Impostazioni ASI App</h2>
+
+    <section class="card">
+      <h3>Account Alpaca</h3>
+      <p>Gestisci connessione alle API.</p>
+      <p><strong>Stato:</strong> <span id="status">Non collegato</span></p>
+      <button id="reconnect" class="btn btn--gold">🔗 Ricollega</button>
+      <button id="disconnect" class="btn btn--gray">❌ Disconnetti</button>
+    </section>
+
+    <section class="card">
+      <h3>Preferenze</h3>
+      <label>
+        <input type="checkbox" id="darkMode" checked>
+        Tema scuro (default)
+      </label>
+      <br>
+      <button id="savePrefs" class="btn btn--blue">💾 Salva preferenze</button>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const status = document.getElementById("status");
+      const reconnect = document.getElementById("reconnect");
+      const disconnect = document.getElementById("disconnect");
+      const savePrefs = document.getElementById("savePrefs");
+
+      reconnect.onclick = () => {
+        alert("🔗 Collegamento ad Alpaca in corso...");
+        status.textContent = "Connesso (demo)";
+      };
+      disconnect.onclick = () => {
+        status.textContent = "Disconnesso";
+      };
+      savePrefs.onclick = () => {
+        alert("💾 Preferenze salvate!");
+      };
+    });
+  </script>
+</body>
+</html>
