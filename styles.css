@@ -1,26 +1,144 @@
-/* MOTORE DI INVESTIMENTO */
-.btn-group {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* === STILE BASE === */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #111;
+  color: #eee;
+  margin: 0;
+  padding: 0;
 }
 
-.parameters {
-  margin-top: 30px;
-  padding: 15px;
-  border: 1px solid #555;
-  border-radius: 8px;
-  background: #1a1a1a;
+h1, h2, h3 {
   color: #ffd700;
+  margin-bottom: 10px;
 }
 
-.btn--blue {
-  background: #337ab7;
+a {
+  color: #ffd700;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* === NAVBAR === */
+.navbar {
+  background-color: #000;
+  color: #ffd700;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar nav a {
+  margin-right: 15px;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.navbar nav a.active {
+  text-decoration: underline;
+}
+
+/* === CARD & ELEMENTI === */
+.card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
   color: #fff;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* === BOTTONI === */
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn--gold {
+  background: linear-gradient(45deg, #ffd700, #b8860b);
+  color: #000;
+}
+
+.btn--gold:hover {
+  background: #ffdf33;
 }
 
 .btn--gray {
   background: #444;
   color: #fff;
+}
+
+.btn--gray:hover {
+  background: #555;
+}
+
+.btn--blue {
+  background: #2a73d9;
+  color: #fff;
+}
+
+.btn--blue:hover {
+  background: #3b84e0;
+}
+
+/* === SEZIONI E PARAMETRI === */
+.parameters {
+  background: #1c1c1c;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 15px;
+  color: #ffd700;
+}
+
+.parameters li {
+  margin: 5px 0;
+}
+
+/* === DASHBOARD === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+th {
+  color: #ffd700;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 700px) {
+  .navbar nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  .container {
+    padding: 10px;
+  }
 }
