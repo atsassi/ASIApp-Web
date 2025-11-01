@@ -1,67 +1,99 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Motore ASI – Controllo</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
+// === ASIApp Motore di investimento ===
+// Versione: novembre 2025
+// Collega il frontend al backend su Render per modalità demo e reali
 
-<body class="screen screen--dark">
-  <header>
-    <h1>Motore di investimento ASI</h1>
-    <p id="connectionStatus" class="status-badge">Connessione: 🟠 Offline</p>
-  </header>
+const API_BASE = "https://asiapp-web-service.onrender.com";
 
-  <main>
-    <section>
-      <h2>Stato attuale</h2>
-      <p>Motore AI: <span id="engineState">🟡 In pausa</span></p>
-      <p>Modalità: <span id="engineMode">Simulazione locale</span></p>
-      <p>Ultima verifica AI: <span id="lastCheck">--</span></p>
-    </section>
+let motoreAttivo = false;
+let modalita = "SIMULATION"; // valori possibili: SIMULATION | TEST | LIVE
 
-    <hr />
+// Funzione per aggiornare lo stato UI
+function aggiornaStatoMotore() {
+  const statoEl = document.getElementById("statoMotore");
+  const btnAttiva = document.getElementById("btnAttiva");
+  const btnPausa = document.getElementById("btnPausa");
 
-    <section>
-      <h2>Modalità operativa</h2>
-      <div class="mode-buttons">
-        <button id="modeSim" class="btn btn--yellow">🟡 Simula</button>
-        <button id="modeTest" class="btn btn--blue">🔵 Test Alpaca</button>
-        <button id="modeLive" class="btn btn--green">🟢 Attivo Alpaca</button>
-      </div>
-    </section>
+  if (motoreAttivo) {
+    statoEl.innerHTML = "🟢 Attivo";
+    btnAttiva.disabled = true;
+    btnPausa.disabled = false;
+  } else {
+    statoEl.innerHTML = "🔴 In pausa";
+    btnAttiva.disabled = false;
+    btnPausa.disabled = true;
+  }
+}
 
-    <hr />
+// Imposta la modalità (Simulazione, Test Alpaca o Live)
+async function setMode(mode) {
+  modalita = mode;
+  try {
+    const res = await fetch(`${API_BASE}/setmode`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode })
+    });
+    const data = await res.json();
+    document.getElementById("logMotore").innerHTML =
+      `✅ Modalità impostata su: ${data.mode}`;
+  } catch (err) {
+    document.getElementById("logMotore").innerHTML =
+      "❌ Errore nel cambio modalità";
+    console.error(err);
+  }
+}
 
-    <section id="funds">
-      <h2>Gestione fondi Alpaca</h2>
-      <p>Saldo attuale: <span id="alpacaBalance">$0.00</span></p>
-      <div class="fund-buttons">
-        <button id="addFunds" class="btn btn--gold">💵 Aggiungi fondi</button>
-        <button id="withdrawFunds" class="btn btn--gray">🏦 Preleva fondi</button>
-      </div>
-      <p id="engineWarning" class="warning" style="display:none;">⚠️ Fondi insufficienti per avviare il motore Live.</p>
-    </section>
+// Attiva il motore AI (inizia simulazione o trading)
+async function attivaMotore() {
+  motoreAttivo = true;
+  aggiornaStatoMotore();
 
-    <hr />
+  try {
+    const res = await fetch(`${API_BASE}/trade`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        apikey: localStorage.getItem("alpacaKey") || "",
+        apisecret: localStorage.getItem("alpacaSecret") || "",
+        symbol: "AAPL",
+        qty: 1,
+        side: "buy"
+      })
+    });
+    const data = await res.json();
+    document.getElementById("logMotore").innerHTML =
+      `🚀 Motore avviato — Risposta: ${JSON.stringify(data)}`;
+  } catch (err) {
+    document.getElementById("logMotore").innerHTML =
+      "❌ Errore durante l’attivazione del motore";
+    console.error(err);
+  }
+}
 
-    <section>
-      <h2>Parametri AI</h2>
-      <ul id="paramsList">
-        <li>ETF Threshold: <strong>+3.3%</strong></li>
-        <li>Stocks Threshold: <strong>+2.0%</strong></li>
-        <li>Take Profit: <strong>-0.3%</strong></li>
-        <li>Stop-loss dinamico: <strong>ON</strong></li>
-      </ul>
-      <button id="refreshAI" class="btn btn--blue">🔄 Ricalcola soglie AI</button>
-    </section>
-  </main>
+// Metti in pausa il motore
+function pausaMotore() {
+  motoreAttivo = false;
+  aggiornaStatoMotore();
+  document.getElementById("logMotore").innerHTML =
+    "⏸️ Motore messo in pausa.";
+}
 
-  <footer>
-    <p>© 2025 ASI Investment – Sistema AI di gestione strategica</p>
-  </footer>
+// Ricalcola le soglie AI (simulato)
+function ricalcolaSoglie() {
+  document.getElementById("logMotore").innerHTML =
+    "🤖 Soglie AI ricalcolate (ETF +3.3%, Stocks +2.0%)";
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+// Inizializzazione pagina
+window.addEventListener("DOMContentLoaded", () => {
+  aggiornaStatoMotore();
+
+  // Event listeners
+  document.getElementById("btnAttiva").addEventListener("click", attivaMotore);
+  document.getElementById("btnPausa").addEventListener("click", pausaMotore);
+  document.getElementById("btnRicalcola").addEventListener("click", ricalcolaSoglie);
+
+  document.getElementById("btnSimula").addEventListener("click", () => setMode("SIMULATION"));
+  document.getElementById("btnTest").addEventListener("click", () => setMode("TEST"));
+  document.getElementById("btnLive").addEventListener("click", () => setMode("LIVE"));
+});
