@@ -1,64 +1,55 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Impostazioni - ASI Investment</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impostazioni ASI App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <header class="navbar">
-    <nav>
-      <a href="dashboard.html">🏠 Dashboard</a>
-      <a href="andamento.html">📈 Andamento</a>
-      <a href="portafoglio.html">💼 Portafoglio</a>
-      <a href="engine.html">🏁 Motore</a>
-      <a href="impostazioni.html" class="active">⚙️ Impostazioni</a>
-      <a href="index.html">🚪 Esci</a>
-    </nav>
-  </header>
+  <nav class="menu">
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="andamento.html">📈 Andamento</a>
+    <a href="portafoglio.html">💼 Portafoglio</a>
+    <a href="motore.html">⚙️ Motore</a>
+    <a href="impostazioni.html" class="active">🔧 Impostazioni</a>
+    <a href="index.html">🚪 Esci</a>
+  </nav>
 
   <main class="container">
     <h2>Impostazioni ASI App</h2>
 
     <section class="card">
       <h3>Account Alpaca</h3>
-      <p>Gestisci connessione alle API.</p>
-      <p><strong>Stato:</strong> <span id="status">Non collegato</span></p>
-      <button id="reconnect" class="btn btn--gold">🔗 Ricollega</button>
-      <button id="disconnect" class="btn btn--gray">❌ Disconnetti</button>
+      <p>Inserisci le tue credenziali API per connettere l'app al tuo account Alpaca.</p>
+
+      <form id="alpacaForm">
+        <label>API Key ID</label>
+        <input type="text" id="apiKey" placeholder="Es. AKFXXXXXXX" required>
+
+        <label>API Secret Key</label>
+        <input type="password" id="apiSecret" placeholder="••••••••••••" required>
+
+        <label>Modalità</label>
+        <select id="apiMode">
+          <option value="PAPER">🧪 Paper Trading</option>
+          <option value="LIVE">💸 Live Trading</option>
+        </select>
+
+        <button type="submit" class="btn btn--gold">🔗 Connetti</button>
+        <button type="button" id="disconnect" class="btn btn--gray">❌ Disconnetti</button>
+      </form>
+
+      <p id="statusMsg" class="status">Stato: <span id="connStatus">Non connesso</span></p>
     </section>
 
     <section class="card">
       <h3>Preferenze</h3>
-      <label>
-        <input type="checkbox" id="darkMode" checked>
-        Tema scuro (default)
-      </label>
-      <br>
-      <button id="savePrefs" class="btn btn--blue">💾 Salva preferenze</button>
+      <label><input type="checkbox" id="darkMode" checked> Tema scuro (default)</label>
+      <button id="savePrefs" class="btn btn--gold">💾 Salva preferenze</button>
     </section>
   </main>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const status = document.getElementById("status");
-      const reconnect = document.getElementById("reconnect");
-      const disconnect = document.getElementById("disconnect");
-      const savePrefs = document.getElementById("savePrefs");
-
-      reconnect.onclick = () => {
-        alert("🔗 Collegamento ad Alpaca in corso...");
-        status.textContent = "Connesso (demo)";
-      };
-      disconnect.onclick = () => {
-        status.textContent = "Disconnesso";
-      };
-      savePrefs.onclick = () => {
-        alert("💾 Preferenze salvate!");
-      };
-    });
-  </script>
+  <script src="impostazioni.js"></script>
 </body>
 </html>
