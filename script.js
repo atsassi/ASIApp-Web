@@ -1,26 +1,30 @@
 // ASIApp – Script principale (motore + connessione + gestione fondi)
 
-// Stato iniziale
+// Inizializza variabili locali
 let engineMode = localStorage.getItem("asi_mode") || "SIMULATION";
 let apiKey = localStorage.getItem("alpacaKey");
 let apiSecret = localStorage.getItem("alpacaSecret");
 
-// Aggiorna interfaccia
-updateConnectionStatus();
-updateModeDisplay();
-updateBalance();
+// Funzione di inizializzazione DOM
+document.addEventListener("DOMContentLoaded", () => {
+  updateConnectionStatus();
+  updateModeDisplay();
+  updateBalance();
 
-// 🔄 Pulsanti modalità
-document.getElementById("modeSim").onclick = () => setMode("SIMULATION");
-document.getElementById("modeTest").onclick = () => setMode("PAPER");
-document.getElementById("modeLive").onclick = () => setMode("LIVE");
+  const sim = document.getElementById("modeSim");
+  const test = document.getElementById("modeTest");
+  const live = document.getElementById("modeLive");
+  const add = document.getElementById("addFunds");
+  const withdraw = document.getElementById("withdrawFunds");
+  const refresh = document.getElementById("refreshAI");
 
-// 🔄 Pulsanti fondi
-document.getElementById("addFunds").onclick = () => openFunding("add");
-document.getElementById("withdrawFunds").onclick = () => openFunding("withdraw");
-
-// 🔄 Ricalcolo AI
-document.getElementById("refreshAI").onclick = () => refreshAI();
+  if (sim) sim.onclick = () => setMode("SIMULATION");
+  if (test) test.onclick = () => setMode("PAPER");
+  if (live) live.onclick = () => setMode("LIVE");
+  if (add) add.onclick = () => openFunding("add");
+  if (withdraw) withdraw.onclick = () => openFunding("withdraw");
+  if (refresh) refresh.onclick = () => refreshAI();
+});
 
 function setMode(mode) {
   engineMode = mode;
@@ -33,6 +37,8 @@ function setMode(mode) {
 function updateModeDisplay() {
   const modeEl = document.getElementById("engineMode");
   const stateEl = document.getElementById("engineState");
+
+  if (!modeEl || !stateEl) return;
 
   if (engineMode === "SIMULATION") {
     modeEl.textContent = "Simulazione locale";
@@ -50,6 +56,8 @@ function updateModeDisplay() {
 
 function updateConnectionStatus() {
   const badge = document.getElementById("connectionStatus");
+  if (!badge) return;
+
   if (engineMode === "SIMULATION") {
     badge.textContent = "Connessione: ⚙️ Locale (simulazione)";
   } else if (engineMode === "PAPER") {
@@ -61,7 +69,11 @@ function updateConnectionStatus() {
 
 function openFunding(type) {
   const url = "https://app.alpaca.markets/account/funding";
-  alert(type === "add" ? "💵 Aprendo pagina deposito Alpaca..." : "🏦 Aprendo pagina prelievo Alpaca...");
+  const msg =
+    type === "add"
+      ? "💵 Aprendo pagina deposito Alpaca..."
+      : "🏦 Aprendo pagina prelievo Alpaca...";
+  alert(msg);
   window.open(url, "_blank");
 }
 
@@ -81,32 +93,41 @@ async function updateBalance() {
         "APCA-API-SECRET-KEY": apiSecret,
       },
     });
+
+    if (!res.ok) throw new Error("API error");
+
     const data = await res.json();
     const balance = parseFloat(data.cash || 0).toFixed(2);
     document.getElementById("alpacaBalance").textContent = `$${balance}`;
-  } catch {
+  } catch (err) {
+    console.warn("Errore aggiornamento saldo:", err);
     document.getElementById("alpacaBalance").textContent = "$0.00";
   }
 }
 
-// ⚠️ Controlla fondi minimi
+// ⚠️ Controlla fondi minimi prima del LIVE
 async function checkFundsBeforeLive() {
-  const res = await fetch("https://paper-api.alpaca.markets/v2/account", {
-    headers: {
-      "APCA-API-KEY-ID": apiKey,
-      "APCA-API-SECRET-KEY": apiSecret,
-    },
-  });
-  const data = await res.json();
-  const funds = parseFloat(data.cash || 0);
+  try {
+    const res = await fetch("https://paper-api.alpaca.markets/v2/account", {
+      headers: {
+        "APCA-API-KEY-ID": apiKey,
+        "APCA-API-SECRET-KEY": apiSecret,
+      },
+    });
 
-  if (funds < 100) {
-    document.getElementById("engineWarning").style.display = "block";
-    alert("⚠️ Fondi insufficienti per modalità LIVE (minimo $100 richiesti)");
-    setMode("SIMULATION");
-  } else {
-    document.getElementById("engineWarning").style.display = "none";
-    alert("✅ Motore LIVE Alpaca avviato con successo");
+    const data = await res.json();
+    const funds = parseFloat(data.cash || 0);
+
+    if (funds < 100) {
+      document.getElementById("engineWarning").style.display = "block";
+      alert("⚠️ Fondi insufficienti per modalità LIVE (minimo $100 richiesti)");
+      setMode("SIMULATION");
+    } else {
+      document.getElementById("engineWarning").style.display = "none";
+      alert("✅ Motore LIVE Alpaca avviato con successo");
+    }
+  } catch (e) {
+    console.error("Errore verifica fondi:", e);
   }
 }
 
