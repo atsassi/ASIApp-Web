@@ -1,99 +1,34 @@
-// === ASIApp Motore di investimento ===
-// Versione: novembre 2025
-// Collega il frontend al backend su Render per modalità demo e reali
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASIApp – Motore di investimento</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="screen screen--motore">
+  <h1>Motore di investimento ASI</h1>
 
-const API_BASE = "https://asiapp-web-service.onrender.com";
+  <section>
+    <p>Stato motore: <span id="statoMotore">🔴 In pausa</span></p>
+  </section>
 
-let motoreAttivo = false;
-let modalita = "SIMULATION"; // valori possibili: SIMULATION | TEST | LIVE
+  <section>
+    <h3>Modalità operativa</h3>
+    <button id="btnSimula">Simula</button>
+    <button id="btnTest">Test Alpaca</button>
+    <button id="btnLive">Attivo Alpaca</button>
+  </section>
 
-// Funzione per aggiornare lo stato UI
-function aggiornaStatoMotore() {
-  const statoEl = document.getElementById("statoMotore");
-  const btnAttiva = document.getElementById("btnAttiva");
-  const btnPausa = document.getElementById("btnPausa");
+  <section style="margin-top:15px;">
+    <h3>Controllo motore</h3>
+    <button id="btnAttiva">Attiva motore</button>
+    <button id="btnPausa">Metti in pausa</button>
+    <button id="btnRicalcola">Ricalcola soglie AI</button>
+  </section>
 
-  if (motoreAttivo) {
-    statoEl.innerHTML = "🟢 Attivo";
-    btnAttiva.disabled = true;
-    btnPausa.disabled = false;
-  } else {
-    statoEl.innerHTML = "🔴 In pausa";
-    btnAttiva.disabled = false;
-    btnPausa.disabled = true;
-  }
-}
+  <p id="logMotore" style="margin-top:20px; color:yellow;">In attesa di avvio...</p>
 
-// Imposta la modalità (Simulazione, Test Alpaca o Live)
-async function setMode(mode) {
-  modalita = mode;
-  try {
-    const res = await fetch(`${API_BASE}/setmode`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mode })
-    });
-    const data = await res.json();
-    document.getElementById("logMotore").innerHTML =
-      `✅ Modalità impostata su: ${data.mode}`;
-  } catch (err) {
-    document.getElementById("logMotore").innerHTML =
-      "❌ Errore nel cambio modalità";
-    console.error(err);
-  }
-}
-
-// Attiva il motore AI (inizia simulazione o trading)
-async function attivaMotore() {
-  motoreAttivo = true;
-  aggiornaStatoMotore();
-
-  try {
-    const res = await fetch(`${API_BASE}/trade`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        apikey: localStorage.getItem("alpacaKey") || "",
-        apisecret: localStorage.getItem("alpacaSecret") || "",
-        symbol: "AAPL",
-        qty: 1,
-        side: "buy"
-      })
-    });
-    const data = await res.json();
-    document.getElementById("logMotore").innerHTML =
-      `🚀 Motore avviato — Risposta: ${JSON.stringify(data)}`;
-  } catch (err) {
-    document.getElementById("logMotore").innerHTML =
-      "❌ Errore durante l’attivazione del motore";
-    console.error(err);
-  }
-}
-
-// Metti in pausa il motore
-function pausaMotore() {
-  motoreAttivo = false;
-  aggiornaStatoMotore();
-  document.getElementById("logMotore").innerHTML =
-    "⏸️ Motore messo in pausa.";
-}
-
-// Ricalcola le soglie AI (simulato)
-function ricalcolaSoglie() {
-  document.getElementById("logMotore").innerHTML =
-    "🤖 Soglie AI ricalcolate (ETF +3.3%, Stocks +2.0%)";
-}
-
-// Inizializzazione pagina
-window.addEventListener("DOMContentLoaded", () => {
-  aggiornaStatoMotore();
-
-  // Event listeners
-  document.getElementById("btnAttiva").addEventListener("click", attivaMotore);
-  document.getElementById("btnPausa").addEventListener("click", pausaMotore);
-  document.getElementById("btnRicalcola").addEventListener("click", ricalcolaSoglie);
-
-  document.getElementById("btnSimula").addEventListener("click", () => setMode("SIMULATION"));
-  document.getElementById("btnTest").addEventListener("click", () => setMode("TEST"));
-  document.getElementById("btnLive").addEventListener("click", () => setMode("LIVE"));
-});
+  <script src="motore.js"></script>
+</body>
+</html>
